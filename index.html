@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3 col-lg-2 sidebar">
@@ -48,17 +47,17 @@
             
             <button class="btn btn-outline-warning btn-sm w-100 mt-3" id="clearFilters">Clear All</button>
         </div>
-
         <div class="col-md-9 col-lg-10 search-area">
-            <h2 class="hi-header mb-4">HIDDEN INVESTIGATIONS <span style="color:white">DB</span></h2>
-            <input type="text" id="searchInput" class="search-box" placeholder="Search by company, domain, or program URL...">
-            
-            <div id="results" class="mt-4">
-                <div class="text-muted" id="statusMessage">Connecting to GitHub Data Source...</div>
-            </div>
-        </div>
+            <div class="sticky-header">
+                <h2 class="hi-header mb-3">HIDDEN INVESTIGATIONS <span style="color:white">DB</span></h2>
+        <input type="text" id="searchInput" class="search-box" placeholder="Search by company, domain, or program URL...">
+        
+        <div id="statusMessage" class="mt-2 small text-warning">Connecting to Data Source...</div>
     </div>
+    
+    <div id="results" class="mt-2"></div>
 </div>
+    </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -71,6 +70,7 @@
 
     let programs = [];
 
+    
     async function loadAllSources() {
         try {
             const fetchPromises = jsonSources.map(url => 
