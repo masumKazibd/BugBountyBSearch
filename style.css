@@ -121,3 +121,62 @@
     color: var(--hi-red);
     text-decoration: underline;
 }
+
+
+
+/* Favicon and Title Styling */
+.title-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.program-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    margin-right: 12px;
+    background-color: #1a1a1a; /* Background while loading */
+    padding: 2px;
+    object-fit: contain;
+}
+
+/* Numbered Scope List */
+.scope-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.scope-item {
+    background: #0a0a0a;
+    border: 1px solid var(--hi-border);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.scope-item:hover {
+    border-color: var(--hi-gold);
+}
+
+.scope-number {
+    color: var(--hi-gold);
+    font-weight: bold;
+    margin-right: 10px;
+    font-family: monospace;
+}
+
+.scope-link {
+    color: #efefef;
+    text-decoration: none;
+}
+
+.scope-link:hover {
+    color: var(--hi-red);
+}
