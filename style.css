@@ -1,0 +1,56 @@
+:root {
+            --hi-gold: #E7B80A;
+            --hi-red: #CE4255;
+            --hi-bg: #000000;
+            --hi-card: #0d0d0d;
+            --hi-border: #1a1a1a;
+        }
+        body { 
+            background-color: var(--hi-bg); 
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: linear-gradient(rgba(231, 184, 10, 0.02) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(231, 184, 10, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            background: var(--hi-card);
+            border-right: 1px solid var(--hi-border);
+            height: 100vh;
+            padding: 25px;
+            position: sticky;
+            top: 0;
+        }
+        .filter-group { margin-bottom: 25px; }
+        .filter-label { color: var(--hi-gold); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 15px; display: block; }
+        
+        /* Custom Checkbox */
+        .form-check-input:checked { background-color: var(--hi-red); border-color: var(--hi-red); }
+        .form-check-label { font-size: 0.9rem; color: #ccc; cursor: pointer; }
+
+        /* Search & Cards */
+        .search-area { padding: 40px; }
+        .hi-header { color: var(--hi-gold); font-weight: 900; letter-spacing: 2px; }
+        .search-box {
+            background: var(--hi-card);
+            border: 1px solid var(--hi-border);
+            border-bottom: 2px solid var(--hi-gold);
+            padding: 12px 20px;
+            width: 100%;
+            color: white;
+            border-radius: 4px;
+        }
+        .program-card {
+            background: var(--hi-card);
+            border: 1px solid var(--hi-border);
+            border-left: 4px solid var(--hi-gold);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .program-card:hover { border-left-color: var(--hi-red); transform: translateX(5px); }
+        .program-name { color: var(--hi-gold); font-size: 1.4rem; text-decoration: none; font-weight: bold; }
+        .badge-hi { font-size: 0.7rem; padding: 5px 10px; border-radius: 2px; }
