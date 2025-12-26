@@ -17,7 +17,7 @@
                 <span class="filter-label">Reward Type</span>
                 <div class="form-check mb-2">
                     <input class="form-check-input filter-check" type="checkbox" value="bounty" id="checkPaid">
-                    <label class="form-check-label" for="checkPaid">Cash Bounty</label>
+                    <label class="form-check-label" for="checkPaid">Bug Bounty</label>
                 </div>
                 <div class="form-check mb-2">
                     <input class="form-check-input filter-check" type="checkbox" value="vdp" id="checkVDP">
@@ -43,6 +43,10 @@
                     <input class="form-check-input filter-check" type="checkbox" value="intigriti" id="int">
                     <label class="form-check-label" for="int">Intigriti</label>
                 </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input filter-check" type="checkbox" value="selfProgram" id="int">
+                    <label class="form-check-label" for="int">Self Program</label>
+                </div>
             </div>
             
             <button class="btn btn-outline-warning btn-sm w-100 mt-3" id="clearFilters">Clear All</button>
@@ -61,16 +65,14 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
     const jsonSources = [
         'https://raw.githubusercontent.com/masumKazibd/BugBountyBSearch/main/data.json',
         // 'https://raw.githubusercontent.com/masumKazibd/BugBountyBSearch/main/data_part2.json',
-        // 'https://raw.githubusercontent.com/masumKazibd/BugBountyBSearch/main/data_part3.json'
     ];
 
     let programs = [];
 
-    
     async function loadAllSources() {
         try {
             const fetchPromises = jsonSources.map(url => 
@@ -101,70 +103,85 @@
     }
 
     loadAllSources();
+    
+    function filterData() {
+        let query = $('#searchInput').val().toLowerCase();
+        let selectedPaid = $('#checkPaid').is(':checked');
+        let selectedVDP = $('#checkVDP').is(':checked');
+        let selectedSwag = $('#checkSwag').is(':checked');
+        
+        let selectedPlatforms = [];
+        if($('#h1').is(':checked')) selectedPlatforms.push('hackerone');
+        if($('#bc').is(':checked')) selectedPlatforms.push('bugcrowd');
+        if($('#int').is(':checked')) selectedPlatforms.push('intigriti');
 
-
-        function filterData() {
-            let query = $('#searchInput').val().toLowerCase();
-            let selectedPaid = $('#checkPaid').is(':checked');
-            let selectedVDP = $('#checkVDP').is(':checked');
-            let selectedSwag = $('#checkSwag').is(':checked');
+        let filtered = programs.filter(p => {
+            let matchesSearch = p.name.toLowerCase().includes(query) || 
+                                p.url.toLowerCase().includes(query) ||
+                                (p.domains && p.domains.some(d => d.toLowerCase().includes(query)));
             
-            let selectedPlatforms = [];
-            if($('#h1').is(':checked')) selectedPlatforms.push('hackerone');
-            if($('#bc').is(':checked')) selectedPlatforms.push('bugcrowd');
-            if($('#int').is(':checked')) selectedPlatforms.push('intigriti');
+            let matchesType = true;
+            if(selectedPaid && !p.bounty) matchesType = false;
+            if(selectedVDP && p.bounty) matchesType = false;
+            if(selectedSwag && !p.swag) matchesType = false;
 
-            let filtered = programs.filter(p => {
-                let matchesSearch = p.name.toLowerCase().includes(query) || 
-                                    p.url.toLowerCase().includes(query) ||
-                                    (p.domains && p.domains.some(d => d.toLowerCase().includes(query)));
-                
-                let matchesType = true;
-                if(selectedPaid && !p.bounty) matchesType = false;
-                if(selectedVDP && p.bounty) matchesType = false;
-                if(selectedSwag && !p.swag) matchesType = false;
+            let matchesPlatform = true;
+            if(selectedPlatforms.length > 0) {
+                matchesPlatform = selectedPlatforms.some(platform => p.url.toLowerCase().includes(platform));
+            }
 
-                let matchesPlatform = true;
-                if(selectedPlatforms.length > 0) {
-                    matchesPlatform = selectedPlatforms.some(platform => p.url.toLowerCase().includes(platform));
-                }
-
-                return matchesSearch && matchesType && matchesPlatform;
-            });
-
-            renderPrograms(filtered);
-        }
-
-        function renderPrograms(dataList) {
-            let html = '';
-            dataList.forEach(p => {
-                let badge = p.bounty ? '<span class="badge badge-hi bg-success me-2">PAID</span>' : '<span class="badge badge-hi bg-secondary me-2">VDP</span>';
-                let swag = p.swag ? '<span class="badge badge-hi bg-danger">SWAG</span>' : '';
-                let scope = (p.domains && p.domains.length > 0) ? p.domains.slice(0, 3).join(', ') : 'Check URL for scope';
-
-                html += `
-                    <div class="program-card">
-                        <div class="small text-secondary mb-1">${p.url}</div>
-                        <div class="d-flex justify-content-between">
-                            <a href="${p.url}" target="_blank" class="program-name">${p.name}</a>
-                            <div>${badge}${swag}</div>
-                        </div>
-                        <div class="mt-2 small text-white-50">Scope highlights: ${scope}</div>
-                    </div>`;
-            });
-            $('#results').html(html || '<div class="text-center mt-5">No programs match these filters.</div>');
-        }
-
-        // Events
-        $('.filter-check, #searchInput').on('input change', filterData);
-        $('#clearFilters').click(function() {
-            $('.filter-check').prop('checked', false);
-            $('#searchInput').val('');
-            renderPrograms(programs);
+            return matchesSearch && matchesType && matchesPlatform;
         });
+
+        renderPrograms(filtered);
+    }
+    
+    function renderPrograms(dataList) {
+        let html = '';
+        dataList.forEach(p => {
+            let badge = p.bounty ? '<span class="badge badge-hi bg-success me-2">PAID</span>' : '<span class="badge badge-hi bg-secondary me-2">VDP</span>';
+            let swag = p.swag ? '<span class="badge badge-hi bg-danger">SWAG</span>' : '';
+            
+            let scopeHtml = '';
+            if (p.domains && p.domains.length > 0) {
+                scopeHtml = '<ul class="scope-list">';
+                p.domains.forEach((domain, index) => {
+                    let fullUrl = domain.startsWith('http') ? domain : `http://${domain}`;
+                    scopeHtml += `
+                        <li class="scope-item">
+                            <span class="scope-number">${index + 1}.</span>
+                            <a href="${fullUrl}" target="_blank" class="scope-link">${domain}</a>
+                        </li>`;
+                });
+                scopeHtml += '</ul>';
+            } else {
+                scopeHtml = '<div class="text-muted small mt-2 fst-italic">No specific domains listed</div>';
+            }
+
+            html += `
+                <div class="program-card">
+                    <div class="small text-secondary mb-1" style="font-family: monospace;">Source: ${p.url}</div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="${p.url}" target="_blank" class="program-name">${p.name}</a>
+                        <div>${badge}${swag}</div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="filter-label" style="font-size: 0.7rem; opacity: 0.8; color: var(--hi-gold);">IN-SCOPE ASSET LIST:</span>
+                        ${scopeHtml}
+                    </div>
+                </div>`;
+        });
+        $('#results').html(html || '<div class="text-center mt-5">No programs match these filters.</div>');
+    }
+
+    $('.filter-check, #searchInput').on('input change', filterData);
+    
+    $('#clearFilters').click(function() {
+        $('.filter-check').prop('checked', false);
+        $('#searchInput').val('');
+        renderPrograms(programs);
     });
-
-
+});
 </script>
 </body>
 </html>
