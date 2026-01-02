@@ -180,3 +180,33 @@
 .scope-link:hover {
     color: var(--hi-red);
 }
+
+
+
+/* Scope control buttons */
+.scope-controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-scope-control {
+    background: transparent;
+    border: 1px solid var(--hi-gold);
+    color: var(--hi-gold);
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-scope-control:hover {
+    background: var(--hi-gold);
+    color: #000;
+}
+
+/* Hide extra items by default */
+.scope-item.hidden {
+    display: none;
+}
